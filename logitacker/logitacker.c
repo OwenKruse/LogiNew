@@ -147,7 +147,7 @@ static void main_event_handler_bsp(bsp_event_t ev) {
         (*p_processor->p_bsp_handler)(p_processor,
                                       ev); // call BSP handler function of p_processor and hand in p_processor (self) as first arg
 }
-
+char g_logitacker_cli_name[32] = "default";
 
 // Transfers execution to active_enum_process_sub_event
 void logitacker_enter_mode_passive_enum(uint8_t *rf_address) {

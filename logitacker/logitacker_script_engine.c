@@ -309,6 +309,23 @@ uint32_t logitacker_script_engine_append_task_type_altstring(char * str) {
     return logitacker_script_engine_append_task(tmp_task);
 }
 
+uint32_t logitacker_script_engine_append_task_type_mouse(uint16_t x_move, uint16_t y_move, uint8_t scroll_v, uint8_t scroll_h, bool leftClick, bool rightClick) {
+    inject_task_t tmp_task = {0};
+    tmp_task.data_len = 9; //include terminating 0x00
+    uint8_t tmp_data[9] = {0};
+    uint32_t cursor_velocity = ((uint32_t)y_move & 0xFFF) << 12 | (x_move & 0xFFF);
+    memcpy(tmp_data + 4, &cursor_velocity, 3);
+    tmp_data[2] = leftClick ? 1 : 0;
+    tmp_data[2] |= rightClick ? 1 << 1 : 0;
+    tmp_data[7] = scroll_v;
+    tmp_data[8] = scroll_h;
+    tmp_task.p_data_u8 = tmp_data;
+    tmp_task.type = INJECT_TASK_TYPE_PRESS_KEYS;
+
+    //return push_task(tmp_task);
+    return logitacker_script_engine_append_task(tmp_task);
+}
+
 uint32_t logitacker_script_engine_append_task_delay(uint32_t delay_ms) {
     inject_task_t tmp_task = {0};
     //tmp_task.delay_ms = delay_ms;

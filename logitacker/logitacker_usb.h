@@ -46,6 +46,7 @@ typedef enum {
     LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_PRESS = 0x12,
     LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_DELAY = 0x13,
     LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_CLEAR = 0x14,
+    LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_MOUSE = 0x15,
 } loigtacker_usb_hidraw_command_t;
 
 /*
@@ -166,7 +167,7 @@ typedef enum {
 }
 
 
-const app_usbd_hid_generic_t m_app_hid_generic;
+extern const app_usbd_hid_generic_t m_app_hid_generic;
 
 
 // User event handler.

@@ -224,6 +224,9 @@ typedef struct {
     HID_key_code_t keys[6];
 } hid_keyboard_report_t;
 
+
+
+
 #define DEF_REPORT_NAMED_X(arg_num, ...) CONCAT_2(DEF_REPORT_NAMED_,arg_num) (__VA_ARGS__)
 #define DEF_REPORT_NAMED(name,mod,...) DEF_REPORT_NAMED_X(NUM_VA_ARGS(__VA_ARGS__), name, mod, __VA_ARGS__)
 #define DEF_REPORT_NAMED_0(name,modifier) static const hid_keyboard_report_t CONCAT_2(REPORT_,name) = { .mod = modifier, .keys = { 0 } }
