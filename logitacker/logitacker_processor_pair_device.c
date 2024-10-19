@@ -186,6 +186,12 @@ void processor_pair_device_init_func_(logitacker_processor_pair_device_ctx_t *se
         case OPTION_LOGITACKER_WORKMODE_UNIFYING:
             nrf_esb_update_channel_frequency_table_unifying_pairing();
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
+            break;
     }
 
 
@@ -386,6 +392,14 @@ void processor_pair_device_create_req1_pay(logitacker_processor_pair_device_ctx_
             self->tmp_tx_payload.data[11] = LOGITACKER_DEVICE_PROTOCOL_G700;
             self->tmp_tx_payload.data[12] = 0x01; //unknown 0x00 for some devices (mouse, keyboard), 0x02 for others (mouse Anywhere MX 2, presenter)
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            self->tmp_tx_payload.data[11] = LOGITACKER_DEVICE_PROTOCOL_LIGHTSPEED;
+            self->tmp_tx_payload.data[12] = 0x00; //unknown 0x00 for some devices (mouse, keyboard), 0x02 for others (mouse Anywhere MX 2, presenter)
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            self->tmp_tx_payload.data[11] = LOGITACKER_DEVICE_PROTOCOL_LIGHTSPEED;
+            self->tmp_tx_payload.data[12] = 0x02; //unknown 0x00 for some devices (mouse, keyboard), 0x02 for others (mouse Anywhere MX 2, presenter)
+            break;
     }
 
 
@@ -401,6 +415,12 @@ void processor_pair_device_create_req1_pay(logitacker_processor_pair_device_ctx_
             break;
         case OPTION_LOGITACKER_WORKMODE_G700:
             self->tmp_tx_payload.data[14] = 0x36; // should have LOGITACKER_DEVICE_CAPS_UNIFYING_COMPATIBLE set and LOGITACKER_DEVICE_CAPS_LINK_ENCRYPTION unset
+            break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            self->tmp_tx_payload.data[14] = 0xB3; // should have LOGITACKER_DEVICE_CAPS_UNIFYING_COMPATIBLE set and LOGITACKER_DEVICE_CAPS_LINK_ENCRYPTION set
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            self->tmp_tx_payload.data[14] = 0xB3; // should have LOGITACKER_DEVICE_CAPS_UNIFYING_COMPATIBLE set and LOGITACKER_DEVICE_CAPS_LINK_ENCRYPTION set
             break;
     }
 

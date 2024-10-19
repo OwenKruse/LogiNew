@@ -2645,6 +2645,21 @@ uint32_t nrf_esb_update_channel_frequency_table_all() {
     return nrf_esb_update_channel_frequency_table(all_frequencies, sizeof(all_frequencies));
 }
 
+uint32_t nrf_esb_update_channel_frequency_table_g305_pairing() {
+        //{1, 2, 3, 4, 5, 42, 78, 79, 81, 50, 57, 25}
+    uint8_t unifying_frequencies[12] = { 1, 2, 3, 4, 5, 42, 78, 79, 81, 50, 57, 25 };
+    uint8_t unifying_frequencies_len = 12;
+    NRF_LOG_INFO("Using channel table 'G305 pairing'");
+    return nrf_esb_update_channel_frequency_table(unifying_frequencies, unifying_frequencies_len);
+}
+
+uint32_t nrf_esb_update_channel_frequency_table_g305() {
+    uint8_t unifying_frequencies[12] = { 1,49,56,41,79,80,81,24,89,78,26,3 };
+    uint8_t unifying_frequencies_len = 12;
+    NRF_LOG_INFO("Using channel table 'Lightspeed'");
+    return nrf_esb_update_channel_frequency_table(unifying_frequencies, unifying_frequencies_len);
+}
+
 uint32_t nrf_esb_set_rf_channel_next() {
     uint32_t next_channel = (m_esb_addr.rf_channel + 1) % m_esb_addr.channel_to_frequency_len;
     return nrf_esb_set_rf_channel(next_channel);

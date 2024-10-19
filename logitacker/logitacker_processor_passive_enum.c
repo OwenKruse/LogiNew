@@ -130,6 +130,13 @@ void processor_passive_enum_init_func_(logitacker_processor_passive_enum_ctx_t *
         case OPTION_LOGITACKER_WORKMODE_UNIFYING:
             nrf_esb_update_channel_frequency_table_unifying();
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
+            break;
+
     }
 
     for (int i=0; i<prefix_count; i++) {
@@ -314,6 +321,12 @@ void passive_enum_process_rx(logitacker_processor_passive_enum_ctx_t *self) {
                         NRF_LOG_INFO("passed through mouse frame to USB");
                     }
                 }
+
+            }
+            if (unifying_report_type == UNIFYING_RF_REPORT_PLAIN_MOUSE) {
+                // Print mouse report
+                NRF_LOG_INFO("Mouse report:");
+                NRF_LOG_HEXDUMP_INFO(&self->tmp_rx_payload.data[2], 7);
 
             }
 

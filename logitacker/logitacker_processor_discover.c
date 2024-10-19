@@ -172,6 +172,12 @@ void processor_discover_init_func_(logitacker_processor_discover_ctx_t *self) {
         case OPTION_LOGITACKER_WORKMODE_UNIFYING:
             nrf_esb_update_channel_frequency_table_unifying_reduced();
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
+            break;
     }
 
     nrf_esb_start_rx(); //start rx

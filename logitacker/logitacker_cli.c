@@ -640,6 +640,16 @@ static void cmd_option_global_workmode_g700(nrf_cli_t const *p_cli, size_t argc,
     nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "working mode set to G700/G700s compatible\r\n");
 }
 
+static void cmd_option_global_workmode_all(nrf_cli_t const *p_cli, size_t argc, char **argv) {
+    g_logitacker_global_config.workmode = OPTION_LOGITACKER_WORKMODE_ALL;
+    nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "working mode set to all devices\r\n");
+}
+
+static void cmd_option_global_workmode_g305(nrf_cli_t const *p_cli, size_t argc, char **argv) {
+    g_logitacker_global_config.workmode = OPTION_LOGITACKER_WORKMODE_G305;
+    nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "working mode set to G305 compatible\r\n");
+}
+
 static void cmd_option_global_bootmode_discover(nrf_cli_t const *p_cli, size_t argc, char **argv) {
     g_logitacker_global_config.bootmode = OPTION_LOGITACKER_BOOTMODE_DISCOVER;
     nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "boot mode set to 'discover'\r\n");
@@ -806,36 +816,32 @@ static void cmd_script_press(nrf_cli_t const *p_cli, size_t argc, char **argv) {
 
 
 static void cmd_script_mouse_move(nrf_cli_t const *p_cli, size_t argc, char **argv) {
-    // uint32_t logitacker_mouse_map_to_hid_report(uint16_t x_move, uint16_t y_move, uint8_t scroll_v, uint8_t scroll_h, bool leftClick, bool rightClick)
+    // uint32_t logitacker_mouse_map_to_hid_report(int16_t x_move, int16_t y_move, int8_t scroll_v, int8_t scroll_h, bool leftClick, bool rightClick)
 
-    if (argc != 6) {
+    // print the arguments
+    for (int i=0; i<argc; i++) {
+        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "argv[%d]: %s\r\n", i, argv[i]);
+    }
+    if (argc != 7) {
         nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid mouse move, need 6 arguments: x_move, y_move, scroll_v, scroll_h, leftClick, rightClick\r\n");
+        // Log the length of the arguments
+        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "argc: %d\r\n", argc - 1);
         return;
     }
 
-    uint16_t x_move, y_move;
-    uint8_t scroll_v, scroll_h;
-    bool leftClick, rightClick;
+    int16_t x_move = 0;
+    int16_t y_move = 0;
+    bool leftClick = false, rightClick = false;
 
-    if (sscanf(argv[1], "%hu", &x_move) != 1) {
-        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid x_move, argument has to be unsigned int\r\n");
+    if (sscanf(argv[1], "%hd", &x_move) != 1) {
+        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid x_move, argument has to be signed int\r\n");
+        return;
+    }
+    if (sscanf(argv[2], "%hd", &y_move) != 1) {
+        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid y_move, argument has to be signed int\r\n");
         return;
     }
 
-    if (sscanf(argv[2], "%hu", &y_move) != 1) {
-        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid y_move, argument has to be unsigned int\r\n");
-        return;
-    }
-
-    if (sscanf(argv[3], "%hhu", &scroll_v) != 1) {
-        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid scroll_v, argument has to be unsigned int\r\n");
-        return;
-    }
-
-    if (sscanf(argv[4], "%hhu", &scroll_h) != 1) {
-        nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid scroll_h, argument has to be unsigned int\r\n");
-        return;
-    }
 
     if (strcmp(argv[5], "true") == 0) {
         leftClick = true;
@@ -854,9 +860,11 @@ static void cmd_script_mouse_move(nrf_cli_t const *p_cli, size_t argc, char **ar
         nrf_cli_fprintf(p_cli, NRF_CLI_ERROR, "invalid rightClick, argument has to be 'true' or 'false'\r\n");
         return;
     }
-    // Append the task to the script engine
-    logitacker_script_engine_append_task_type_mouse(x_move, y_move, scroll_v, scroll_h, leftClick, rightClick);
+
+    logitacker_script_engine_append_task_type_mouse(x_move, y_move, leftClick, rightClick);
+
 }
+
 
 
 static void cmd_discover_onhit_activeenum(nrf_cli_t const * p_cli, size_t argc, char **argv)
@@ -1699,6 +1707,8 @@ NRF_CLI_CREATE_STATIC_SUBCMD_SET(m_sub_options_global_workmode)
     NRF_CLI_CMD(unifying,   NULL, "Unifying compatible workmode.", cmd_option_global_workmode_unifying),
     NRF_CLI_CMD(lightspeed,   NULL, "G-Series LIGHTSPEED workmode.", cmd_option_global_workmode_lightspeed),
     NRF_CLI_CMD(g700,   NULL, "G700/G700s receiver workmode.", cmd_option_global_workmode_g700),
+    NRF_CLI_CMD(all,   NULL, "All compatible workmode.", cmd_option_global_workmode_all),
+    NRF_CLI_CMD(g305,   NULL, "G305 receiver workmode.", cmd_option_global_workmode_g305),
     NRF_CLI_SUBCMD_SET_END
 };
 

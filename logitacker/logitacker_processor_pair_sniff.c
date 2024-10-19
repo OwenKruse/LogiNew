@@ -226,6 +226,12 @@ void processor_pair_sniff_init_func_(logitacker_processor_pair_sniff_ctx_t *self
         case OPTION_LOGITACKER_WORKMODE_UNIFYING:
             nrf_esb_update_channel_frequency_table_unifying_pairing();
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
+            break;
     }
 
     // write payload (autostart TX is enabled for PTX mode)
@@ -249,6 +255,12 @@ void processor_pair_sniff_deinit_func_(logitacker_processor_pair_sniff_ctx_t *se
         case OPTION_LOGITACKER_WORKMODE_G700:
         case OPTION_LOGITACKER_WORKMODE_UNIFYING:
             nrf_esb_update_channel_frequency_table_unifying();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
             break;
     }
 

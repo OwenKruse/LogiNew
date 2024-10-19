@@ -6,6 +6,7 @@
 #define NRF_LOG_MODULE_NAME LOGITACKER_SCRIPT_ENGINE
 #include "nrf_log.h"
 #include "logitacker_flash.h"
+#include "logitacker_mouse_map.h"
 
 NRF_LOG_MODULE_REGISTER();
 
@@ -309,18 +310,36 @@ uint32_t logitacker_script_engine_append_task_type_altstring(char * str) {
     return logitacker_script_engine_append_task(tmp_task);
 }
 
-uint32_t logitacker_script_engine_append_task_type_mouse(uint16_t x_move, uint16_t y_move, uint8_t scroll_v, uint8_t scroll_h, bool leftClick, bool rightClick) {
+uint32_t logitacker_script_engine_append_task_type_mouse(int16_t x_move, int16_t y_move, bool leftClick, bool rightClick) {
     inject_task_t tmp_task = {0};
-    tmp_task.data_len = 9; //include terminating 0x00
-    uint8_t tmp_data[9] = {0};
-    uint32_t cursor_velocity = ((uint32_t)y_move & 0xFFF) << 12 | (x_move & 0xFFF);
-    memcpy(tmp_data + 4, &cursor_velocity, 3);
-    tmp_data[2] = leftClick ? 1 : 0;
-    tmp_data[2] |= rightClick ? 1 << 1 : 0;
-    tmp_data[7] = scroll_v;
-    tmp_data[8] = scroll_h;
-    tmp_task.p_data_u8 = tmp_data;
-    tmp_task.type = INJECT_TASK_TYPE_PRESS_KEYS;
+    uint8_t mouse_payload[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    //Payload at [2] is for the first 8 clicks where 1 is down and 0 is up
+    // If just left click, set to 1
+    // If just right click, set to 2
+    // If both, set to 3
+
+    if (leftClick) {
+        mouse_payload[2] = 0x01;
+    }
+    if (rightClick) {
+        mouse_payload[2] = 0x02;
+    }
+    if (leftClick && rightClick) {
+        mouse_payload[2] = 0x03;
+    }
+
+    //Payload at [4] is for the y movement of the mouse
+    mouse_payload[4] = (y_move & 0xFFF) >> 8;
+    mouse_payload[5] = y_move & 0xFF;
+
+    //Payload at [6] is for the x movement of the mouse
+    mouse_payload[6] = (x_move & 0xFFF) >> 8;
+    mouse_payload[7] = x_move & 0xFF;
+
+    tmp_task.data_len = 10; //include terminating 0x00
+    tmp_task.p_data_u8 = mouse_payload;
+    tmp_task.type = INJECT_TASK_TYPE_MOUSE_REPORT;
 
     //return push_task(tmp_task);
     return logitacker_script_engine_append_task(tmp_task);
@@ -365,6 +384,10 @@ void logitacker_script_engine_print_current_tasks(nrf_cli_t const * p_cli) {
             case INJECT_TASK_TYPE_PRESS_KEYS:
                 nrf_cli_fprintf(p_cli, NRF_CLI_VT100_COLOR_YELLOW, "press ");
                 nrf_cli_fprintf(p_cli, NRF_CLI_DEFAULT, "%s\r\n", task_data);
+                break;
+            case INJECT_TASK_TYPE_MOUSE_REPORT:
+                nrf_cli_fprintf(p_cli, NRF_CLI_VT100_COLOR_YELLOW, "mouse ");
+                nrf_cli_fprintf(p_cli, NRF_CLI_DEFAULT, "x: %d, y: %d, left: %d, right: %d\r\n", (task_data[6] << 8) | task_data[7], (task_data[4] << 8) | task_data[5], (task_data[2] & 0x01) == 0x01, (task_data[2] & 0x02) == 0x02);
                 break;
             default:
                 nrf_cli_fprintf(p_cli, NRF_CLI_DEFAULT, "%04d: unknown task type %d\r\n", task_num, task.type);

@@ -904,4 +904,50 @@ uint32_t logitacker_devices_generate_keyboard_frame(logitacker_devices_unifying_
 
 }
 
+uint32_t logitacker_devices_generate_mouse_frame_USB(nrf_esb_payload_t *p_result_payload, hid_mouse_report_t const *const p_in_mouse_report) {
+    //typedef struct {
+    //    uint16_t x_move;
+    //    uint16_t y_move;
+    //    uint8_t scroll_v;
+    //    uint8_t scroll_h;
+    //    bool leftClick;
+    //    bool rightClick;
+    //} hid_mouse_report_t;
+    /*
+     *   len: 10
+     *   0x00       : dev ID
+     *   0x01       : report type (0x8c = plain mouse)
+     *   0x02       : buttons
+     *   0x03       : x movement
+     *   0x04       : y movement
+     *   0x05       : scroll wheel
+     *   0x06       : unknown
+     *   0x07       : unknown
+     *   0x08       : unknown
+     *   0x09       : Logitech CRC
+     *
+     *   example: 00 8C 00 00 00 00 00 00 00 00 5F
+     */
+    NRF_LOG_DEBUG("GENERATING MOUSE FRAME");
+
+    p_result_payload->length = 10;
+    p_result_payload->data[0] = 0x00; //device index
+    p_result_payload->data[1] = UNIFYING_RF_REPORT_PLAIN_MOUSE | UNIFYING_RF_REPORT_BIT_KEEP_ALIVE | UNIFYING_RF_REPORT_BIT_UNKNOWN; //c1
+    p_result_payload->data[2] = p_in_mouse_report->leftClick | (p_in_mouse_report->rightClick << 1);
+    p_result_payload->data[3] = p_in_mouse_report->x_move & 0x00FF;
+    p_result_payload->data[4] = (p_in_mouse_report->x_move & 0xFF00) >> 8;
+    p_result_payload->data[5] = p_in_mouse_report->y_move & 0x00FF;
+    p_result_payload->data[6] = (p_in_mouse_report->y_move & 0xFF00) >> 8;
+    p_result_payload->data[7] = p_in_mouse_report->scroll_v;
+    p_result_payload->data[8] = 0x00;
+    p_result_payload->data[9] = 0x00; // will be overwritten by logitech checksum
+    logitacker_unifying_payload_update_checksum(p_result_payload->data, p_result_payload->length);
+
+    return NRF_SUCCESS;
+}
+
+
+
+
+
 

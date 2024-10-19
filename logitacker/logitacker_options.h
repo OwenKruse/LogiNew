@@ -32,6 +32,8 @@ typedef enum {
     OPTION_LOGITACKER_WORKMODE_UNIFYING,   // compatible to Unifying and (encrypted) presentation clickers
     OPTION_LOGITACKER_WORKMODE_LIGHTSPEED,   // compatible to Logitech LIGHTSPEED
     OPTION_LOGITACKER_WORKMODE_G700,   // compatible to Logitech LIGHTSPEED
+    OPTION_LOGITACKER_WORKMODE_ALL,   // compatible to all
+    OPTION_LOGITACKER_WORKMODE_G305,   // compatible to Logitech G305
 } option_logitacker_workmode_t;
 
 typedef enum {

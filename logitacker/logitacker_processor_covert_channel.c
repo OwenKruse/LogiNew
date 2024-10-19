@@ -451,6 +451,12 @@ void processor_covert_channel_init_func_(logitacker_processor_covert_channel_ctx
         case OPTION_LOGITACKER_WORKMODE_G700:
             nrf_esb_update_channel_frequency_table_unifying();
             break;
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+            nrf_esb_update_channel_frequency_table_all();
+            break;
+        case OPTION_LOGITACKER_WORKMODE_G305:
+            nrf_esb_update_channel_frequency_table_g305();
+            break;
     }
 
     nrf_esb_enable_all_channel_tx_failover(true); //retransmit payloads on all channels if transmission fails

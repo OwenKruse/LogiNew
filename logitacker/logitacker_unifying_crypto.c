@@ -350,6 +350,8 @@ uint32_t logitacker_unifying_crypto_encrypt_keyboard_frame(nrf_esb_payload_t * r
     uint8_t counter_bytes[4] = { 0 };
     switch (g_logitacker_global_config.workmode) {
         case OPTION_LOGITACKER_WORKMODE_LIGHTSPEED:
+        case OPTION_LOGITACKER_WORKMODE_ALL:
+        case OPTION_LOGITACKER_WORKMODE_G305:
             counter_bytes[3] = (uint8_t) ((counter & 0xff000000) >> 24);
             counter_bytes[2] = (uint8_t) ((counter & 0x00ff0000) >> 16);
             counter_bytes[1] = (uint8_t) ((counter & 0x0000ff00) >> 8);

@@ -223,6 +223,12 @@ void logitacker_options_print(nrf_cli_t const * p_cli)
             case OPTION_LOGITACKER_WORKMODE_G700:
                 workmode_str = "Logitech G700/G700s compatible";
                 break;
+            case OPTION_LOGITACKER_WORKMODE_ALL:
+                workmode_str = "all compatible";
+                break;
+            case OPTION_LOGITACKER_WORKMODE_G305:
+                workmode_str = "Logitech G305 compatible";
+                break;
         }
 
         char * bootmode_str = "unknown";

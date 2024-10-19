@@ -13,7 +13,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.#include <stdint.h>
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+#include <stdint.h>
 #include "stdbool.h"
 #include "stddef.h"
 

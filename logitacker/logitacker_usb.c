@@ -411,16 +411,37 @@ uint32_t logitacker_usb_read_hidraw_output_report() {
                     break;
                 }
                 case LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_MOUSE: {
-                    uint32_t mouse_report;
-                    memcpy(&mouse_report, &p_report[3], 4);
-                    logitacker_script_engine_append_task_type_mouse(
-                            (uint16_t) (mouse_report & 0x00000FFF),
-                            (uint16_t) ((mouse_report & 0x00FFF000) >> 12),
-                            (uint8_t) ((mouse_report & 0xFF000000) >> 24),
-                            (uint8_t) ((mouse_report & 0xFF00000000) >> 32),
-                            (bool) ((mouse_report & 0x1000000000) >> 40),
-                            (bool) ((mouse_report & 0x2000000000) >> 41)
-                    );
+                    int16_t x_move = (int16_t) ((p_report[3] << 8) | p_report[4]);
+                    int16_t y_move = (int16_t) ((p_report[5] << 8) | p_report[6]);
+                    bool leftClick = p_report[7] & 1;
+                    bool rightClick = p_report[7] & 2;
+                    logitacker_script_engine_append_task_type_mouse(x_move, y_move, leftClick, rightClick);
+                    logitacker_injection_start_execution(true);
+                    break;
+                }
+                case LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_INJECT: {
+                    logitacker_injection_start_execution(true);
+                    break;
+                }
+                case LOGITACKER_USB_HIDRAW_COMMAND_SCRIPT_MOUSE_LIGHTSPEED: {
+                    int16_t x_move = (int16_t) ((p_report[3] << 8) | p_report[4]);
+                    int16_t y_move = (int16_t) ((p_report[5] << 8) | p_report[6]);
+                    bool leftClick = p_report[7] & 1;
+                    bool rightClick = p_report[7] & 2;
+                    logitacker_script_engine_append_task_type_mouse(x_move, y_move, leftClick, rightClick);
+                    logitacker_injection_start_execution(true);
+                    break;
+                }
+                case LOGITACKER_USB_HIDRAW_COMMAND_INJECT_TARGET: {
+                    uint8_t target[6];
+                    memcpy(target, &p_report[3], 6);
+                    logitacker_enter_mode_injection(target);
+                    break;
+                }
+                case LOGITACKER_USB_HIDRAW_COMMAND_PASSIVE_ENUM: {
+                    uint8_t target[6];
+                    memcpy(target, &p_report[3], 6);
+                    logitacker_enter_mode_passive_enum(target);
                     break;
                 }
                 default:
