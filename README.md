@@ -1,22 +1,17 @@
-# LOGITacker
+# LOGITacker Mouse
 
-**README is still under construction**
+**A Modified version of the Logitacker tool to be used with vulnerable logitech mice and dongles**
 
-LOGITacker is a hardware tool to enumerate and test vulnerabilities of Logitech Wireless Input devices via RF.
-In contrast to available tooling, it is designed as stand-alone tool. This means not only the low level RF part, 
-but also the application part is running on dedicated hardware, which could provides Command Line Interface (CLI)
-via USB serial connection. 
+LOGITacker mouse is a modifed version of the hardware tool to enumerate and test vulnerabilities of Logitech Wireless Input devices via RF.
+This modified version injects mouse packets instantly without requiring the attacker 1. First write a script and 2. inject the scritp. All of the things happen automatically. 
 
 Keeping hardware from other vendors (not Logitech) out of scope, allowed further optimizations and improvements for
 low level stuff like RF device discovery.
 
-Additionally support for the following boards was addded:
-- Nordic nRF52840 Dongle (pca10059)
+Additionally support for the following boards was addded (Currently only compiles for the MDK Dongle but other boards are planned in the future):
 - MakerDiary MDK Dongle
-- MakerDiary MDK
-- April Brother Dongle
 
-LOGITacker covers the following Logitech vulnerabilities:
+LOGITacker Mouse covers the following Logitech vulnerabilities:
 
 - MouseJack (plain injection)
 - forced pairing
@@ -32,6 +27,60 @@ LOGITacker does currently not cover the following Logitech:
 *Note: KeyJack and CVE-2019-13053 are covered by mjackit*
 
 LOGITacker can also be used as Hardware Implant (see **USBsamurai**'s Tutorial https://medium.com/@LucaBongiorni/usbsamurai-for-dummies-4bd47abf8f87 )
+
+# Mouse Features
+#### There are currently two ways to use the additional mouse features.
+
+### (Preferred) HID input:
+The device can receive mouse commands through the HID device created by Logitacker.
+
+Using the controller.rs file provided for you we can connect to the HID device, set our target and inject mouse commands:
+
+    // Test file for the HIDDeviceController
+    use std::sync::{Arc, Mutex};
+    use hidapi::{HidApi};
+    use crate::controller;
+    
+    
+    fn main() {
+      let controller = Arc::new(Mutex::new(controller::HIDDeviceController::new().unwrap()));
+      let api = HidApi::new()?;
+      let mut device = controller.lock().unwrap();
+      device.open_device(&api)?;
+      device.clear()?;
+      device.set_target("Vulnerable Device Address")?;
+  
+      // Move the mouse down and to the right
+      device.move_mouse(10, 10, 0, 0)?;
+      // Press the left mouse button
+      device.move_mouse(0, 0, 1, 0)?;
+    }
+
+The Rust Class provides the following:
+
+    pub fn new() -> Result<HIDDeviceController, String> {
+        // Creates a new HIDDeviceController
+    }
+    
+    pub fn open_device(&mut self, api: &HidApi) -> Result<(), String> {
+        // Opens the HID device
+    }
+    
+    pub fn clear(&mut self) -> Result<(), String> {
+        // Clears the HID device
+    }
+    
+    pub fn set_target(&mut self, target: &str) -> Result<(), String> {
+        // Sets the target device
+    }
+    
+    pub fn move_mouse(&mut self, x: i32, y: i32, left_click: i32, right_click: i32) -> Result<(), String> {
+        // Moves the mouse and clicks
+    }
+
+### (Alternative) USB Serial:
+The device can receive mouse commands through the USB Serial device created by Logitacker.
+This is already documented below.
 
 # 1 feature summary
 
