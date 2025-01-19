@@ -3,7 +3,7 @@
 **A Modified version of the Logitacker tool to be used with vulnerable logitech mice and dongles**
 
 LOGITacker mouse is a modifed version of the hardware tool to enumerate and test vulnerabilities of Logitech Wireless Input devices via RF.
-This modified version injects mouse packets instantly without requiring the attacker 1. First write a script and 2. inject the scritp. All of the things happen automatically. 
+This modified version injects mouse packets instantly.
 
 Keeping hardware from other vendors (not Logitech) out of scope, allowed further optimizations and improvements for
 low level stuff like RF device discovery.
